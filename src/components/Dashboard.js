@@ -1,7 +1,7 @@
 // Dashboard component
 import React from 'react';
 import DashboardCard from './DashboardCard';
-import BackgroundImage from '../assets/still-life-laboratory-samples.jpg';
+import BackgroundImage from '../assets/BackgroundImg.jpg';
 import Header from './Header';
 
 const Dashboard = () => {

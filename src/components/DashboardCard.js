@@ -1,10 +1,25 @@
 import React, { useState } from "react";
 import axios from "axios";
+import excelDownload from "../utils/excelDownload";
+import DownloadIcon from "../assets/DownloadIcon.png";
+import TickIcon from "../assets/TickIcon.png"
 
 const DashboardCard = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isDownload, setIsDownload] = useState(false)
+
+  const handleDownload = () => {
+    excelDownload(data); 
+    if(data){
+      setIsDownload(true);
+      setTimeout(()=>{
+        setIsDownload(false);
+      },3000)
+    }
+   
+  };
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -22,37 +37,62 @@ const DashboardCard = () => {
     formData.append("file", selectedFile);
 
     try {
-      const response = await axios.post("http://localhost:8000/upload", formData, {
+      await axios.post("http://localhost:8000/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log("Zip file uploaded successfully!");
-      setData(response.data);
+      //alert("Zip file uploaded successfully!");
+      //setData(response.data);
     } catch (err) {
       setError(err.message);
+      console.log(error)
     }
   };
 
   const getData = async () => {
+    if (!selectedFile) {
+      alert("Please upload a zip file first.");
+      return;
+    }
+
     try {
-      const response = await axios.get("http://localhost:8000/data");
+      const response = await axios.get("http://localhost:8000/");
+      console.log(response);
       setData(response.data);
     } catch (err) {
-      alert("Please upload zip file");
+      alert("Error fetching data. Please try again later.");
     }
   };
 
-  console.log(data);
+  function getStatusCodeColor(status) {
+    switch (status) {
+      case "Positive":
+        return "bg-red-500 font-bold";
+      case "W-Positive":
+        return "bg-yellow-500 font-bold";
+      case "Negative":
+        return "bg-green-500 font-bold";
+      default:
+        return "";
+    }
+  }
 
   return (
-    <div className="bg-slate-400 shadow-black shadow-2xl h-2/3 w-3/4 opacity-75 rounded-2xl">
+    <div className="bg-gray-400 shadow-black shadow-2xl h-[550px] w-[600] opacity-75 rounded-2xl">
       <form
-        className="flex justify-center items-center m-8"
+        className="flex justify-center items-center m-8 border-2 border-red-950 rounded-full  "
         onSubmit={handleSubmit}
         encType="multipart/form-data"
       >
-        <input type="file" name="fileUpload" id="fileUpload" onChange={handleFileChange} accept=".zip" />
+        <input
+          type="file"
+          name="fileUpload"
+          id="fileUpload"
+          onChange={handleFileChange}
+          accept=".zip"
+          className=" px-5"
+        />
         <button
           type="submit"
           className="bg-red-700 text-white p-2 rounded-full hover:bg-blue-600 transition-colors duration-300"
@@ -62,13 +102,14 @@ const DashboardCard = () => {
       </form>
 
       <div className="flex justify-evenly">
-        <div className="m-4 max-h-80 overflow-y-auto">
+        <div className="m-4  h-80 overflow-y-auto">
           <table>
             <thead className="sticky top-0 bg-white">
               <tr>
                 <th className="p-2">Species</th>
                 <th className="p-2">Voltage</th>
                 <th className="p-2">Current</th>
+                <th className="p-2">Result</th>
               </tr>
             </thead>
             <tbody>
@@ -78,19 +119,35 @@ const DashboardCard = () => {
                   return (
                     <tr key={item}>
                       <td className="p-2 text-center">{item}</td>
-                      <td className="p-2 text-center">{species.voltage.toFixed(2)}</td>
-                      <td className="p-2 text-center">{species.current.toFixed(2)}</td>
+                      <td className="p-2 text-center">
+                        {species.voltage.toFixed(2)}
+                      </td>
+                      <td className="p-2 text-center">
+                        {species.current.toFixed(2)}
+                      </td>
+                      <td className={`p-2 text-center ${getStatusCodeColor(species.status)}`} >{species.status}</td>
                     </tr>
                   );
                 })}
             </tbody>
           </table>
         </div>
+      </div>
+      <div className="flex justify-center">
         <button
-          className="bg-[#87B2C8] hover:bg-slate-500 hover:text-white p-4 rounded-full my-5 transition-colors duration-500 font-bold"
+          className="bg-[#46a1cf] hover:bg-slate-500 hover:text-white p-4 rounded-full my-5 mx-2 transition-colors duration-500 font-bold"
           onClick={getData}
         >
           Read Parameters
+        </button>
+        <button
+
+          className="bg-[#46a1cf] hover:bg-slate-500 hover:text-white mx-2 p-4 rounded-full my-5 transition-colors duration-500 font-bold border-2"
+          onClick={handleDownload}
+          
+        >
+          {isDownload ?<img src={TickIcon} alt="Downloaded" className="h-6 w-6" />:
+          <img src={DownloadIcon} alt="Download" className="h-6 w-6" />}
         </button>
       </div>
     </div>
