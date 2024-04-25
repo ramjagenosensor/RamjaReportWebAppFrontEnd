@@ -37,7 +37,7 @@ const DashboardCard = () => {
     formData.append("file", selectedFile);
 
     try {
-      await axios.post("http://localhost:8000/", formData, {
+      await axios.post("https://ramjareportwebappbackend.onrender.com/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -57,7 +57,7 @@ const DashboardCard = () => {
     }
 
     try {
-      const response = await axios.get("http://localhost:8000/");
+      const response = await axios.get("https://ramjareportwebappbackend.onrender.com/");
       console.log(response);
       setData(response.data);
     } catch (err) {
