@@ -3,12 +3,18 @@ import axios from "axios";
 import excelDownload from "../utils/excelDownload";
 import DownloadIcon from "../assets/DownloadIcon.png";
 import TickIcon from "../assets/TickIcon.png"
+import {useNavigate} from "react-router-dom"
+
+
+
 
 const DashboardCard = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isDownload, setIsDownload] = useState(false)
+  const navigate = useNavigate();
+  // console.log(navigate);
 
   const handleDownload = () => {
     excelDownload(data); 
@@ -16,6 +22,8 @@ const DashboardCard = () => {
       setIsDownload(true);
       setTimeout(()=>{
         setIsDownload(false);
+        navigate('/');
+       
       },3000)
     }
    
@@ -37,6 +45,7 @@ const DashboardCard = () => {
     formData.append("file", selectedFile);
 
     try {
+    
       await axios.post("https://ramjareportwebappbackend.onrender.com/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -58,7 +67,7 @@ const DashboardCard = () => {
 
     try {
       const response = await axios.get("https://ramjareportwebappbackend.onrender.com/");
-      console.log(response);
+      // console.log(response);
       setData(response.data);
     } catch (err) {
       alert("Error fetching data. Please try again later.");
@@ -79,7 +88,7 @@ const DashboardCard = () => {
   }
 
   return (
-    <div className="bg-gray-400 shadow-black shadow-2xl h-[550px] w-[600] opacity-75 rounded-2xl">
+    <div className="bg-gray-400 shadow-black shadow-2xl h-[550px] w-[400px] opacity-75 rounded-2xl">
       <form
         className="flex justify-center items-center m-8 border-2 border-red-950 rounded-full  "
         onSubmit={handleSubmit}
