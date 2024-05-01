@@ -2,31 +2,26 @@ import React, { useState } from "react";
 import axios from "axios";
 import excelDownload from "../utils/excelDownload";
 import DownloadIcon from "../assets/DownloadIcon.png";
-import TickIcon from "../assets/TickIcon.png"
-import {useNavigate} from "react-router-dom"
-
-
-
+import TickIcon from "../assets/TickIcon.png";
+import { useNavigate } from "react-router-dom";
 
 const DashboardCard = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [isDownload, setIsDownload] = useState(false)
+  const [isDownload, setIsDownload] = useState(false);
   const navigate = useNavigate();
   // console.log(navigate);
 
   const handleDownload = () => {
-    excelDownload(data); 
-    if(data){
+    excelDownload(data);
+    if (data) {
       setIsDownload(true);
-      setTimeout(()=>{
+      setTimeout(() => {
         setIsDownload(false);
-        navigate('/');
-       
-      },3000)
+        navigate("/");
+      }, 3000);
     }
-   
   };
 
   const handleFileChange = (event) => {
@@ -43,19 +38,23 @@ const DashboardCard = () => {
 
     const formData = new FormData();
     formData.append("file", selectedFile);
+   
 
     try {
+      await axios.post(
+        "https://ramjareportwebappbackend.onrender.com/",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+     
     
-      await axios.post("https://ramjareportwebappbackend.onrender.com/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      //alert("Zip file uploaded successfully!");
-      //setData(response.data);
     } catch (err) {
       setError(err.message);
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -66,7 +65,9 @@ const DashboardCard = () => {
     }
 
     try {
-      const response = await axios.get("https://ramjareportwebappbackend.onrender.com/");
+      const response = await axios.get(
+        "https://ramjareportwebappbackend.onrender.com/"
+      );
       // console.log(response);
       setData(response.data);
     } catch (err) {
@@ -102,12 +103,18 @@ const DashboardCard = () => {
           accept=".zip"
           className=" px-5"
         />
-        <button
-          type="submit"
-          className="bg-red-700 text-white p-2 rounded-full hover:bg-blue-600 transition-colors duration-300"
-        >
-          Upload
-        </button>
+
+       
+
+  <button
+    type="submit"
+    className="bg-red-700 text-white p-2 rounded-full hover:bg-blue-600 transition-colors duration-300"
+  >
+    Upload
+  </button>
+
+
+        
       </form>
 
       <div className="flex justify-evenly">
@@ -134,7 +141,13 @@ const DashboardCard = () => {
                       <td className="p-2 text-center">
                         {species.current.toFixed(2)}
                       </td>
-                      <td className={`p-2 text-center ${getStatusCodeColor(species.status)}`} >{species.status}</td>
+                      <td
+                        className={`p-2 text-center ${getStatusCodeColor(
+                          species.status
+                        )}`}
+                      >
+                        {species.status}
+                      </td>
                     </tr>
                   );
                 })}
@@ -150,13 +163,14 @@ const DashboardCard = () => {
           Read Parameters
         </button>
         <button
-
           className="bg-[#46a1cf] hover:bg-slate-500 hover:text-white mx-2 p-4 rounded-full my-5 transition-colors duration-500 font-bold border-2"
           onClick={handleDownload}
-          
         >
-          {isDownload ?<img src={TickIcon} alt="Downloaded" className="h-6 w-6" />:
-          <img src={DownloadIcon} alt="Download" className="h-6 w-6" />}
+          {isDownload ? (
+            <img src={TickIcon} alt="Downloaded" className="h-6 w-6" />
+          ) : (
+            <img src={DownloadIcon} alt="Download" className="h-6 w-6" />
+          )}
         </button>
       </div>
     </div>

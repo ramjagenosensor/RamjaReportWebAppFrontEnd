@@ -33,17 +33,17 @@ const downloadExcel = (data) => {
 
   // Set the first column header to "Name", "UH ID", "Age", "Hospital", "Date" for patient details
   Object.keys(patientDetails).forEach((key, index) => {
+    console.log(key, "-" , index)
     worksheet[String.fromCharCode(65 + index) + "1"].v = key;
   });
 
-  // Set the first column header to "species" for data array
-  worksheet["A2"].v = "species";
-
+//console.log(worksheet);
   const workbook = {
     Sheets: { data: worksheet },
     SheetNames: ["data"],
   };
 
+//console.log(workbook);
   const excelBuffer = xlsx.write(workbook, {
     bookType: "xlsx",
     type: "array",
@@ -51,7 +51,7 @@ const downloadExcel = (data) => {
 
   saveAs(
     new Blob([excelBuffer], { type: "application/octet-stream" }),
-    "data.xlsx"
+    `Data - ${worksheet.A2.v} - ${worksheet.B2.v}.xlsx`
   );
 };
 
