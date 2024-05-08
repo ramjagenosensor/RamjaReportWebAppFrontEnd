@@ -5,10 +5,12 @@ import BackgroundImage from "../assets/BackgroundImg.jpg";
 import Header from "./Header";
 import PatientDetails from "./PatientDetails";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import Loader from "./Loader";
 
 const DashboardRouter = createBrowserRouter([
   {
     path: "/",
+    //element: <Loader/>
     element:<PatientDetails />
   },
   {

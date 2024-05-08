@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // Import Link
+import {useNavigate } from "react-router-dom";
 
 const PatientDetails = () => {
   const [Name, setName] = useState("");
@@ -7,6 +7,10 @@ const PatientDetails = () => {
   const [Age, setAge] = useState("");
   const [Hospital, setHospital] = useState("");
   const [Date, setDate] = useState("");
+  const [testType, setTestType] = useState("select");
+  const [isTestTypeSelected, setIsTestTypeSelected] = useState(false);
+  
+  const navigate=useNavigate();
 
   //using loacal storage to save these values & will be accesed further in another logic
 
@@ -15,12 +19,27 @@ const PatientDetails = () => {
     localStorage.setItem("Uhid", Uhid);
     localStorage.setItem("Age", Age);
     localStorage.setItem("Hospital", Hospital);
-    localStorage.setItem("Date", Date);
-  }, [Name, Uhid, Age, Hospital, Date])
+    localStorage.setItem("TestType", testType);
+  }, [Name, Uhid, Age, Hospital, Date, testType]);
+
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (testType !== "select") {
+      // Test Type is selected, proceed to next page
+      
+      navigate('/dashboard');
+      
+    } else {
+      // Test Type is not selected, display error message or prevent submission
+      setIsTestTypeSelected(true);
+    }
+  };
+
 
   return (
     <>
-      <form className="bg-gray-400 shadow-black shadow-2xl h-[550px] p-5 opacity-75 flex flex-col justify-center items-center rounded-2xl">
+      <form  onSubmit={handleSubmit}  className="bg-gray-400 shadow-white shadow-xl h-[550px] p-5 opacity-75 flex flex-col justify-center items-center rounded-2xl">
         <h1 className="font-bold text-2xl my-2">Enter Patient Details</h1>
         <div className="flex flex-col my-1">
           <div className="flex items-center">
@@ -64,17 +83,35 @@ const PatientDetails = () => {
             <input
               className="p-2 rounded-2xl w-56"
               onChange={(e) => setDate(e.target.value)}
-              type="text"
+              type="date"
             />
+            
+
           </div>
+          <br />
+           <div className="flex items-center">
+            <h2 className="mr-3 p-2 font-bold w-24">Test Type:</h2>
+            <select
+              className="p-2 rounded-2xl w-56"
+              onChange={(e) => setTestType(e.target.value)}
+              value={testType} 
+            >
+              <option value="select">Select</option>
+              <option value="UTI">UTI</option>
+              <option value="Sepsis">Sepsis</option>
+            </select>
+          </div>
+          {isTestTypeSelected === true &&
+            <p className="text-red-600 font-bold mx-auto mt-2">Select test type !</p>
+}
         </div>
         {/* Use Link to redirect to /dashboard */}
-        <Link
-          to="/dashboard"
-          className="bg-[#46a1cf] hover:bg-slate-500 hover:text-white p-4 rounded-full my-5 mx-2 transition-colors duration-500 font-bold"
+        <button
+         type="submit"
+          className="bg-[#1276a7] hover:bg-slate-500 hover:text-white p-4 rounded-full my-5 mx-2 w-28  transition-colors duration-500 font-bold"
         >
           Next
-        </Link>
+        </button>
       </form>
     </>
   );

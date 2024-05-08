@@ -13,6 +13,7 @@ const downloadExcel = (data) => {
   const Age = localStorage.getItem("Age");
   const Hospital = localStorage.getItem("Hospital");
   const Date = localStorage.getItem("Date");
+  const TestType = localStorage.getItem("TestType");
 
   // Combine patient details into an object
   const patientDetails = {
@@ -21,6 +22,7 @@ const downloadExcel = (data) => {
     Age,
     Hospital,
     Date,
+    TestType
   };
 
   // Create an array of objects with patient details as the first entry
@@ -30,6 +32,7 @@ const downloadExcel = (data) => {
   }))];
 
   const worksheet = xlsx.utils.json_to_sheet(excelData);
+  console.log(worksheet);
 
   // Set the first column header to "Name", "UH ID", "Age", "Hospital", "Date" for patient details
   Object.keys(patientDetails).forEach((key, index) => {
@@ -43,7 +46,7 @@ const downloadExcel = (data) => {
     SheetNames: ["data"],
   };
 
-//console.log(workbook);
+console.log(workbook);
   const excelBuffer = xlsx.write(workbook, {
     bookType: "xlsx",
     type: "array",
@@ -51,7 +54,7 @@ const downloadExcel = (data) => {
 
   saveAs(
     new Blob([excelBuffer], { type: "application/octet-stream" }),
-    `Data - ${worksheet.A2.v} - ${worksheet.B2.v}.xlsx`
+    `Data - ${worksheet.A2.v} - ${worksheet.B2.v}- ${worksheet.F2.v}.xlsx`
   );
 };
 
