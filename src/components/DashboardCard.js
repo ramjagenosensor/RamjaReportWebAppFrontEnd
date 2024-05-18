@@ -29,9 +29,9 @@ const DashboardCard = () => {
 
   const updateStatusForSepsis = (species) => {
     let result = "";
-    const finalOutputCurrent = species.current;
+    const finalOutputCurrent = species.current * 2;
 
-    if (finalOutputCurrent > -15) {
+    if (finalOutputCurrent > -20) {
       result = "Negative";
     } else if (finalOutputCurrent > -20 && finalOutputCurrent <= -15) {
       result = "W-Positive";
@@ -178,7 +178,8 @@ const DashboardCard = () => {
                       Object.keys(data).map((item) => {
                         const species = data[item];
                         const updatedStatus = updateStatusForSepsis(species);
-                        console.log(updatedStatus);
+                        const multipliedCurrent = species.current * 2;
+                        //console.log(updatedStatus);
                         return (
                           <tr key={item}>
                             <td className="p-2 text-center">{item}</td>
@@ -189,7 +190,7 @@ const DashboardCard = () => {
                             </td>
                             <td className="p-2 text-center">
                               <span className="sepsis-current">
-                                {species.current.toFixed(2)}
+                                {multipliedCurrent.toFixed(2)}
                               </span>
                             </td>
                             <td
